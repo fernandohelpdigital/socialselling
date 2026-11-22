@@ -1,4 +1,11 @@
 {
+  "enabledPlugins": {
+    "hyperframes@hyperframes": true,
+    "rea-video@rea-video": true,
+    "lemo-opuscar@lemolab": true,
+    "pixelfx@pixelfx": true,
+    "mcp-for-blender@mcp-for-blender": true
+  },
   "extraKnownMarketplaces": {
     "hyperframes": {
       "source": {
