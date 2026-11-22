@@ -1,0 +1,12 @@
+{
+  "extraKnownMarketplaces": {
+    "hallmark": { "source": { "source": "github", "repo": "Nutlope/hallmark" } },
+    "taste-skill": { "source": { "source": "github", "repo": "Leonxlnx/taste-skill" } },
+    "impeccable": { "source": { "source": "github", "repo": "pbakaus/impeccable" } }
+  },
+  "enabledPlugins": {
+    "hallmark@hallmark": true,
+    "taste-skill@taste-skill": true,
+    "impeccable@impeccable": true
+  }
+}

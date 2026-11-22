@@ -1,0 +1,15 @@
+{
+  "name": "buscando-1-milhao-video",
+  "private": true,
+  "type": "module",
+  "description": "Vídeos do build in public, feitos com huashu-motion (HTML + GSAP renderizado quadro a quadro).",
+  "scripts": {
+    "om": "om",
+    "check": "om check reel",
+    "render": "om render reel",
+    "qa": "om qa reel --sheet"
+  },
+  "devDependencies": {
+    "huashu-motion": "^0.6.0"
+  }
+}
