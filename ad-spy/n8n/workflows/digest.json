@@ -1,0 +1,610 @@
+{
+  "name": "Espião de Anúncios · 2. Análise e resumo",
+  "nodes": [
+    {
+      "id": "5c79bb5b-4341-450c-bd4c-d66157d1b757",
+      "name": "Sobre este workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -340
+      ],
+      "parameters": {
+        "content": "## Espião de Anúncios · análise e resumo\nToda segunda às 8h a IA classifica os anúncios novos (formato, dor, oferta, gancho, CTA, funil) e escreve o resumo da semana, que chega no WhatsApp dos números configurados no nó Config.\n\nPode rodar a qualquer momento. Só analisa o que ainda não foi analisado, então não gasta duas vezes.\n\nAntes do primeiro uso, preencha `company_context` e `digest_numbers` no nó Config.",
+        "width": 520,
+        "height": 300,
+        "color": 7
+      }
+    },
+    {
+      "id": "cf7febfb-5f1c-4b28-82d5-8bb73b4f0afd",
+      "name": "Toda segunda às 8h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "eb9bf6ce-69ea-45f3-9108-60c4cbc7bc8e",
+      "name": "Executar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        180
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "a1f5e190-36bc-4220-8233-5495c8e81c01",
+      "name": "Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Configuração da análise e do resumo do Espião de Anúncios.\n// Edite só os valores abaixo. As chaves ficam nas credenciais do n8n, nunca aqui.\nconst config = {\n  // Projeto do Supabase onde você rodou o 001_schema.sql\n  supabase_url: \"https://SEU-PROJETO.supabase.co\",\n\n  // Modelo da OpenAI que classifica cada anúncio (mais barato)\n  openai_model_analysis: \"gpt-5-mini\",\n\n  // Modelo da OpenAI que escreve o resumo da semana\n  openai_model_digest: \"gpt-5\",\n\n  // Máximo de anúncios novos analisados por execução (controle de custo)\n  analysis_limit: 150,\n\n  // Período coberto pelo resumo, em dias\n  report_days: 7,\n\n  // Instância da uazapi que envia o resumo no WhatsApp\n  uazapi_url: \"https://SUA-INSTANCIA.uazapi.com\",\n\n  // Números que recebem o resumo, com DDI e DDD. Exemplo ['5511999999999']\n  digest_numbers: [],\n\n  // Quem somos. A IA usa isso para adaptar as ideias. Quanto mais específico, melhor.\n  company_context: `\nEmpresa: [NOME DA EMPRESA]\nO que vendemos: [ex.: serviços gerenciados de TI, outsourcing de TI, suporte e infraestrutura]\nPara quem: [ex.: empresas de 20 a 300 funcionários, setores, região]\nDiferenciais: [PREENCHER]\nTicket e modelo de contrato: [PREENCHER]\nCanais de aquisição hoje: [ex.: Instagram, LinkedIn, indicação]\n`.trim(),\n};\n\nreturn [{ json: config }];\n"
+      }
+    },
+    {
+      "id": "f926171a-2107-4df3-ab45-cbd094692692",
+      "name": "Buscar anúncios pendentes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        440,
+        80
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_ads_view?select=id,platform,advertiser_name,competitor_name,format,headline,body,cta,link_url,image_url,video_url,variations,days_running,analysis_attempts&analyzed_at=is.null&analysis_attempts=lt.3&order=first_seen_at.desc&limit={{ $('Config').first().json.analysis_limit }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "21673c02-e66b-4b7e-a2cf-87ac27401f51",
+      "name": "Preparar análises",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Builds one OpenAI request per ad that still has no analysis.\n\nconst WRITING_RULES = [\n  'Escreva em português do Brasil, direto e concreto.',\n  'Não use travessão nem meia-risca. Use vírgula, ponto ou parênteses.',\n  'Não use dois-pontos para criar efeito ou suspense.',\n  'Não use a construção \"não é X, é Y\" nem \"não X, mas Y\".',\n  'Não use frases de antecipação do tipo \"e é aqui que tudo muda\".',\n  'Não empilhe frases curtas em sequência rítmica.',\n  'Não use ênclise nem mesóclise. Prefira próclise ou reescreva a frase.',\n].join('\\n');\n\nconst PAINS = [\n  'cyber_security', 'lgpd_compliance', 'it_cost', 'downtime_productivity', 'lack_of_it_team',\n  'cloud_migration', 'microsoft_365', 'backup_recovery', 'helpdesk_support', 'network_infrastructure',\n  'growth_scale', 'ai_automation', 'digital_transformation', 'none', 'other',\n];\nconst OFFERS = [\n  'free_assessment', 'lead_magnet', 'webinar_event', 'demo', 'quote_contact', 'free_trial',\n  'price_promo', 'brand_awareness', 'recruiting', 'other',\n];\nconst PROOFS = [\n  'numbers_results', 'client_cases', 'testimonial', 'certifications_partners', 'years_in_market',\n  'awards', 'client_logos', 'none',\n];\n\nconst ANALYSIS_SCHEMA = {\n  type: 'object',\n  additionalProperties: false,\n  required: [\n    'is_relevant', 'summary', 'creative_format', 'visual_style', 'image_text', 'pain', 'angle', 'offer',\n    'funnel_stage', 'hook', 'cta', 'destination', 'proof', 'target_audience', 'tone',\n    'inspiration_score', 'idea_for_us',\n  ],\n  properties: {\n    is_relevant: {\n      type: 'boolean',\n      description: 'true quando o anúncio vende serviços de TI ou tecnologia para empresas (B2B). false para vaga de emprego, venda ao consumidor final ou assunto fora do nicho.',\n    },\n    summary: { type: 'string', description: 'Uma frase dizendo o que o anúncio vende e para quem.' },\n    creative_format: {\n      type: 'string',\n      enum: ['static_image', 'carousel', 'video', 'text_only', 'document', 'message', 'other'],\n    },\n    visual_style: {\n      type: 'string',\n      description: 'Descrição curta do visual (ex.: foto de pessoa com texto grande, print de dashboard, ilustração 3D). Use \"sem imagem\" quando não houver.',\n    },\n    image_text: { type: ['string', 'null'], description: 'Texto escrito dentro da imagem, quando houver.' },\n    pain: { type: 'string', enum: PAINS, description: 'Dor principal que o anúncio ataca.' },\n    angle: { type: 'string', description: 'Como o anúncio ataca a dor, em uma frase.' },\n    offer: { type: 'string', enum: OFFERS, description: 'O que o anúncio oferece em troca do clique.' },\n    funnel_stage: { type: 'string', enum: ['top', 'middle', 'bottom'] },\n    hook: { type: 'string', description: 'A primeira frase ou ideia que prende a atenção.' },\n    cta: { type: ['string', 'null'], description: 'Chamada para ação, como aparece no anúncio.' },\n    destination: {\n      type: 'string',\n      enum: ['landing_page', 'native_form', 'whatsapp', 'website', 'event_page', 'unknown'],\n    },\n    proof: { type: 'array', items: { type: 'string', enum: PROOFS } },\n    target_audience: { type: 'string', description: 'Quem parece ser o alvo (porte, cargo, setor).' },\n    tone: {\n      type: 'string',\n      enum: ['technical', 'consultative', 'fear_based', 'aspirational', 'humorous', 'institutional'],\n    },\n    inspiration_score: {\n      type: 'integer',\n      enum: [1, 2, 3, 4, 5],\n      description: '1 a 5. Quanto esse anúncio serve de referência para nós (clareza da oferta, força do gancho, tempo no ar).',\n    },\n    idea_for_us: {\n      type: 'string',\n      description: 'Uma ideia prática de anúncio inspirada neste, adaptada à nossa empresa, sem copiar o texto.',\n    },\n  },\n};\n\nfunction supportsReasoningEffort(model) {\n  return /^(gpt-5|o\\d)/.test(model);\n}\n\nfunction describeAd(ad) {\n  const lines = [\n    `Plataforma: ${ad.platform}`,\n    `Anunciante: ${ad.competitor_name || ad.advertiser_name || 'desconhecido'}`,\n    `Formato informado pela plataforma: ${ad.format || 'desconhecido'}`,\n    `Dias no ar até agora: ${ad.days_running ?? 'desconhecido'}`,\n    `Variações do anúncio: ${ad.variations ?? 'desconhecido'}`,\n    `Título: ${ad.headline || '(sem título)'}`,\n    `Texto: ${ad.body || '(sem texto)'}`,\n    `CTA: ${ad.cta || '(sem CTA)'}`,\n    `Link de destino: ${ad.link_url || '(desconhecido)'}`,\n  ];\n  if (ad.video_url) lines.push('O anúncio é um vídeo. A imagem anexada, quando existe, é a capa do vídeo.');\n  return lines.join('\\n');\n}\n\nfunction buildAnalysisRequest(ad, config) {\n  const useImage = Boolean(ad.image_url) && (ad.analysis_attempts || 0) === 0;\n  const content = [{ type: 'text', text: describeAd(ad) }];\n  if (useImage) content.push({ type: 'image_url', image_url: { url: ad.image_url, detail: 'low' } });\n\n  const body = {\n    model: config.openai_model_analysis,\n    messages: [\n      {\n        role: 'system',\n        content: [\n          'Você é analista de mídia paga especializado em empresas de serviços de TI no Brasil (MSPs, outsourcing de TI, cloud, segurança).',\n          'Analise o anúncio de um concorrente e classifique cada campo do schema.',\n          'Use só o que está no anúncio. Quando faltar informação, escolha \"unknown\", \"other\" ou null.',\n          'Anúncio com muitos dias no ar provavelmente está dando resultado. Leve isso em conta na nota de inspiração.',\n          '',\n          'Contexto da nossa empresa, para o campo idea_for_us:',\n          config.company_context,\n          '',\n          'Regras de escrita para os campos de texto:',\n          WRITING_RULES,\n        ].join('\\n'),\n      },\n      { role: 'user', content },\n    ],\n    response_format: {\n      type: 'json_schema',\n      json_schema: { name: 'ad_analysis', strict: true, schema: ANALYSIS_SCHEMA },\n    },\n  };\n  if (supportsReasoningEffort(config.openai_model_analysis)) body.reasoning_effort = 'low';\n\n  return {\n    ad_id: ad.id,\n    attempts: ad.analysis_attempts || 0,\n    used_image: useImage,\n    model: config.openai_model_analysis,\n    openai_body: body,\n  };\n}\n\nfunction parseJsonList(text) {\n  if (Array.isArray(text)) return text;\n  if (typeof text !== 'string' || text.trim() === '') return [];\n  const parsed = JSON.parse(text);\n  if (!Array.isArray(parsed)) throw new Error(`Expected a JSON array from Supabase, got: ${text.slice(0, 200)}`);\n  return parsed;\n}\n\n// @n8n-entry\nconst config = $('Config').first().json;\nconst ads = parseJsonList($('Buscar anúncios pendentes').first().json.body);\nreturn ads.map((ad) => ({ json: buildAnalysisRequest(ad, config) }));\n"
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "a979677a-4e6f-4da7-b9a7-626bab70655f",
+      "name": "Tem anúncio para analisar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "96df5496-bea6-458a-9dfb-44f476aa9fda",
+              "leftValue": "={{ $json.ad_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "2b5defcd-7795-48c0-a5d7-3effad036180",
+      "name": "Analisar com IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openai_body) }}",
+        "options": {
+          "timeout": 180000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "batching": {
+            "batch": {
+              "batchSize": 4,
+              "batchInterval": 500
+            }
+          }
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "Espião · OpenAI"
+        }
+      }
+    },
+    {
+      "id": "c9ec8e2a-4327-4bed-a2cd-94b12499947c",
+      "name": "Interpretar análise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Reads the OpenAI answer for one ad and builds the PATCH for spy_ads.\n\nfunction readOpenAiResponse(response) {\n  const status = Number(response.statusCode) || 0;\n  let body = response.body ?? response.data ?? null;\n  if (typeof body === 'string') {\n    try {\n      body = JSON.parse(body);\n    } catch {\n      return { ok: false, error: `Invalid JSON from OpenAI (HTTP ${status})` };\n    }\n  }\n  if (status < 200 || status >= 300) {\n    const message = body && body.error ? body.error.message || body.error.type : `HTTP ${status}`;\n    return { ok: false, error: `OpenAI HTTP ${status}: ${String(message).slice(0, 400)}` };\n  }\n  const message = body && body.choices && body.choices[0] && body.choices[0].message;\n  if (!message) return { ok: false, error: 'OpenAI returned no message' };\n  if (message.refusal) return { ok: false, error: `OpenAI refused: ${String(message.refusal).slice(0, 300)}` };\n  try {\n    return { ok: true, analysis: JSON.parse(message.content), usage: body.usage || null };\n  } catch {\n    return { ok: false, error: 'OpenAI content is not valid JSON' };\n  }\n}\n\nfunction buildAnalysisPatch(request, response, now) {\n  const result = readOpenAiResponse(response);\n  if (!result.ok) {\n    return {\n      ad_id: request.ad_id,\n      patch: { analysis_attempts: request.attempts + 1, analysis_error: result.error },\n    };\n  }\n  return {\n    ad_id: request.ad_id,\n    patch: {\n      analysis: {\n        ...result.analysis,\n        model: request.model,\n        used_image: request.used_image,\n        tokens: result.usage ? result.usage.total_tokens : null,\n      },\n      analyzed_at: now.toISOString(),\n      analysis_attempts: request.attempts + 1,\n      analysis_error: null,\n    },\n  };\n}\n\n// @n8n-entry\nconst request = $('Preparar análises').item.json;\nreturn { json: buildAnalysisPatch(request, $json, new Date()) };\n",
+        "mode": "runOnceForEachItem"
+      }
+    },
+    {
+      "id": "6a59f3c2-0159-4fd8-8d91-12dfde3193a4",
+      "name": "Salvar análise",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_ads?id=eq.{{ $json.ad_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.patch) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      }
+    },
+    {
+      "id": "9a23b28f-28ef-4cb3-9fd8-05b2f4d56ee7",
+      "name": "Gerar relatório",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1760,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/rpc/spy_weekly_report",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_days: $('Config').first().json.report_days }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "6f554634-b119-4b33-b07b-1ac73af9763d",
+      "name": "Preparar resumo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Builds the OpenAI request that writes the weekly WhatsApp digest.\n\nconst WRITING_RULES = [\n  'Não use travessão nem meia-risca. Use vírgula, ponto ou parênteses.',\n  'Não use dois-pontos. Para rótulos, quebre a linha.',\n  'Não use a construção \"não é X, é Y\" nem \"não X, mas Y\".',\n  'Não use frases de antecipação do tipo \"e é aqui que tudo muda\".',\n  'Não empilhe frases curtas em sequência rítmica.',\n  'Não use ênclise nem mesóclise. Prefira próclise ou reescreva a frase.',\n].join('\\n');\n\nconst LABELS = [\n  'Rótulos usados nos dados (traduza ao escrever):',\n  'pain: cyber_security=segurança/ataques, lgpd_compliance=LGPD, it_cost=custo de TI, downtime_productivity=parada e produtividade, lack_of_it_team=falta de equipe de TI, cloud_migration=migração para nuvem, microsoft_365=Microsoft 365, backup_recovery=backup, helpdesk_support=suporte/helpdesk, network_infrastructure=rede e infraestrutura, growth_scale=crescimento, ai_automation=IA e automação, digital_transformation=transformação digital',\n  'offer: free_assessment=diagnóstico gratuito, lead_magnet=material rico, webinar_event=webinar/evento, demo=demonstração, quote_contact=orçamento/contato, free_trial=teste grátis, price_promo=preço/promoção, brand_awareness=marca, recruiting=vagas',\n  'funnel_stage: top=topo, middle=meio, bottom=fundo',\n].join('\\n');\n\nfunction formatDate(iso) {\n  const date = new Date(iso);\n  const day = String(date.getUTCDate()).padStart(2, '0');\n  const month = String(date.getUTCMonth() + 1).padStart(2, '0');\n  return `${day}/${month}`;\n}\n\nfunction supportsReasoningEffort(model) {\n  return /^(gpt-5|o\\d)/.test(model);\n}\n\nfunction buildDigestRequest(report, config) {\n  const period = report.period || {};\n  const title = `Espião de anúncios · ${formatDate(period.from)} a ${formatDate(period.to)}`;\n  const instructions = [\n    'Você escreve o resumo semanal de inteligência de anúncios de concorrentes para o dono de uma empresa de serviços de TI.',\n    'O resumo vai pelo WhatsApp. Use *negrito* do WhatsApp, listas com \"•\" e linhas em branco entre seções. Nada de títulos markdown, tabelas ou links encurtados.',\n    'Máximo de 3.500 caracteres.',\n    '',\n    'Estrutura, nesta ordem, pulando a seção que não tiver dados:',\n    `1. Primeira linha *${title}*. Na linha seguinte, os números da semana (anúncios ativos, novos, pausados e a divisão por plataforma).`,\n    '2. *Movimentos dos concorrentes*. Até 6 concorrentes com o que mudou na semana.',\n    '3. *Anúncios que estão durando*. Até 4 anúncios ativos há mais tempo, que provavelmente dão resultado. Para cada um, a dor, a oferta, o gancho e o link da biblioteca.',\n    '4. *Padrões*. As dores, ofertas e formatos que mais aparecem nos anúncios ativos.',\n    '5. *Ideias para nós*. De 3 a 5 ideias concretas de anúncio (formato, gancho, oferta e CTA) adaptadas ao contexto da nossa empresa. Inspire-se nos padrões e nos anúncios que duram, sem copiar texto de concorrente.',\n    '6. *Anunciantes novos no radar*. Até 5 anunciantes achados pelas palavras-chave que ainda não monitoramos.',\n    '7. Se collection_health tiver falhas, uma linha final avisando quais coletas falharam.',\n    '',\n    'Se houver poucos dados (por exemplo, na primeira semana), diga isso em uma frase e trabalhe com o que existe. Nunca invente número, anúncio ou concorrente que não esteja nos dados.',\n    '',\n    'Regras de escrita:',\n    WRITING_RULES,\n    '',\n    LABELS,\n  ].join('\\n');\n\n  const body = {\n    model: config.openai_model_digest,\n    messages: [\n      { role: 'system', content: instructions },\n      {\n        role: 'user',\n        content: [\n          'Contexto da nossa empresa:',\n          config.company_context,\n          '',\n          'Dados da semana (JSON):',\n          JSON.stringify(report),\n        ].join('\\n'),\n      },\n    ],\n  };\n  if (supportsReasoningEffort(config.openai_model_digest)) body.reasoning_effort = 'medium';\n  return { title, report, openai_body: body };\n}\n\n// @n8n-entry\nconst config = $('Config').first().json;\nlet report = $input.first().json;\nif (typeof report.body === 'string') report = JSON.parse(report.body);\nreturn [{ json: buildDigestRequest(report, config) }];\n"
+      }
+    },
+    {
+      "id": "83f7231e-50ab-4c6f-8556-bded50bdd2fd",
+      "name": "Escrever resumo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2200,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openai_body) }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "Espião · OpenAI"
+        }
+      }
+    },
+    {
+      "id": "3e815547-8361-47de-ac36-16caa943f498",
+      "name": "Montar mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Extracts the digest text from OpenAI. Falls back to a plain summary if the model fails,\n// so the weekly message always goes out.\n\nconst MAX_CHARS = 4000;\n\nfunction fallbackMessage(title, report, error) {\n  const totals = report.totals || {};\n  const byPlatform = Object.entries(totals.active_by_platform || {})\n    .map(([platform, count]) => `${platform} ${count}`)\n    .join(', ');\n  const lines = [\n    `*${title}*`,\n    `Anúncios ativos ${totals.active_ads ?? 0} (${byPlatform || 'sem dados'}). Novos ${totals.new_ads ?? 0}. Pausados ${totals.stopped_ads ?? 0}.`,\n    '',\n    `A IA não conseguiu escrever o resumo desta semana (${error}). Os dados estão salvos no Supabase, na tabela spy_digests.`,\n  ];\n  return lines.join('\\n');\n}\n\nfunction extractDigest(request, response) {\n  const status = Number(response.statusCode) || 0;\n  let body = response.body ?? response.data ?? null;\n  if (typeof body === 'string') {\n    try {\n      body = JSON.parse(body);\n    } catch {\n      body = null;\n    }\n  }\n  const content = body && body.choices && body.choices[0] && body.choices[0].message && body.choices[0].message.content;\n  if (status >= 200 && status < 300 && typeof content === 'string' && content.trim() !== '') {\n    const text = content.trim().replace(/\\s*[—–]\\s*/g, ', ');\n    return { message: text.length > MAX_CHARS ? `${text.slice(0, MAX_CHARS - 1)}…` : text, ai_ok: true };\n  }\n  const error = body && body.error ? body.error.message || body.error.type : `HTTP ${status}`;\n  return { message: fallbackMessage(request.title, request.report, String(error).slice(0, 200)), ai_ok: false };\n}\n\n// @n8n-entry\nconst request = $('Preparar resumo').first().json;\nconst config = $('Config').first().json;\nconst { message, ai_ok } = extractDigest(request, $input.first().json);\nreturn [\n  {\n    json: {\n      message,\n      ai_ok,\n      digest_row: {\n        period_start: request.report.period && request.report.period.from,\n        period_end: request.report.period && request.report.period.to,\n        report: request.report,\n        message,\n        model: ai_ok ? config.openai_model_digest : null,\n      },\n    },\n  },\n];\n"
+      }
+    },
+    {
+      "id": "10cf11b6-908c-4c5d-8c29-0c82e28cd18b",
+      "name": "Salvar resumo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2640,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_digests",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.digest_row) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      }
+    },
+    {
+      "id": "156bcafc-17be-495a-a793-96f90027e6b5",
+      "name": "Separar destinatários",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// One item per WhatsApp number in Config.digest_numbers.\n\nfunction buildRecipients(numbers, message) {\n  return (Array.isArray(numbers) ? numbers : [])\n    .map((n) => String(n).replace(/\\D/g, ''))\n    .filter((n) => n.length >= 10)\n    .map((number) => ({ number, text: message }));\n}\n\n// @n8n-entry\nconst config = $('Config').first().json;\nconst message = $('Montar mensagem').first().json.message;\nreturn buildRecipients(config.digest_numbers, message).map((r) => ({ json: r }));\n"
+      }
+    },
+    {
+      "id": "e2691f3d-d667-48c8-8cbd-000277188689",
+      "name": "Enviar no WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3080,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.uazapi_url }}/send/text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.number, text: $json.text }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Espião · uazapi"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Toda segunda às 8h": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Executar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Buscar anúncios pendentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar anúncios pendentes": {
+      "main": [
+        [
+          {
+            "node": "Preparar análises",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar análises": {
+      "main": [
+        [
+          {
+            "node": "Tem anúncio para analisar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem anúncio para analisar?": {
+      "main": [
+        [
+          {
+            "node": "Analisar com IA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gerar relatório",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisar com IA": {
+      "main": [
+        [
+          {
+            "node": "Interpretar análise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interpretar análise": {
+      "main": [
+        [
+          {
+            "node": "Salvar análise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar análise": {
+      "main": [
+        [
+          {
+            "node": "Gerar relatório",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar relatório": {
+      "main": [
+        [
+          {
+            "node": "Preparar resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar resumo": {
+      "main": [
+        [
+          {
+            "node": "Escrever resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escrever resumo": {
+      "main": [
+        [
+          {
+            "node": "Montar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar mensagem": {
+      "main": [
+        [
+          {
+            "node": "Salvar resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar resumo": {
+      "main": [
+        [
+          {
+            "node": "Separar destinatários",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar destinatários": {
+      "main": [
+        [
+          {
+            "node": "Enviar no WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  }
+}

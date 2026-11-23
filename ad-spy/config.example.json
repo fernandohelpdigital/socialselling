@@ -1,0 +1,18 @@
+{
+  "n8n_url": "https://SEU-N8N.exemplo.com.br",
+  "credentials": {
+    "supabase": "Espião · Supabase",
+    "apify": "Espião · Apify",
+    "openai": "Espião · OpenAI",
+    "uazapi": "NOME DA SUA CREDENCIAL DA UAZAPI NO N8N"
+  },
+  "collect": {
+    "supabase_url": "https://SEU-PROJETO.supabase.co"
+  },
+  "digest": {
+    "supabase_url": "https://SEU-PROJETO.supabase.co",
+    "uazapi_url": "https://SUA-INSTANCIA.uazapi.com",
+    "digest_numbers": ["5511999999999"],
+    "company_context": "Empresa: ...\nO que vendemos: ...\nPara quem: ...\nDiferenciais: ...\nTicket e modelo de contrato: ...\nCanais de aquisição hoje: ..."
+  }
+}
