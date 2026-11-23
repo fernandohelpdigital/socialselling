@@ -2,7 +2,7 @@
   "name": "Espião de Anúncios · 2. Análise e resumo",
   "nodes": [
     {
-      "id": "5c79bb5b-4341-450c-bd4c-d66157d1b757",
+      "id": "f88bf2d6-d006-47d8-bf02-9bb2447c696b",
       "name": "Sobre este workflow",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -18,7 +18,7 @@
       }
     },
     {
-      "id": "cf7febfb-5f1c-4b28-82d5-8bb73b4f0afd",
+      "id": "493aa45b-02d1-4ba0-83bf-03faf41ca66b",
       "name": "Toda segunda às 8h",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
@@ -38,7 +38,7 @@
       }
     },
     {
-      "id": "eb9bf6ce-69ea-45f3-9108-60c4cbc7bc8e",
+      "id": "c733c4d5-83a5-4e82-8d15-bf2811036915",
       "name": "Executar manualmente",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -49,7 +49,7 @@
       "parameters": {}
     },
     {
-      "id": "a1f5e190-36bc-4220-8233-5495c8e81c01",
+      "id": "13cb1ea3-8e2f-4fdb-b0c4-fcaacabf69d7",
       "name": "Config",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -62,7 +62,7 @@
       }
     },
     {
-      "id": "f926171a-2107-4df3-ab45-cbd094692692",
+      "id": "8b3ce301-d872-4527-98db-f53b2fac9428",
       "name": "Buscar anúncios pendentes",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -74,7 +74,7 @@
         "method": "GET",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_ads_view?select=id,platform,advertiser_name,competitor_name,format,headline,body,cta,link_url,image_url,video_url,variations,days_running,analysis_attempts&analyzed_at=is.null&analysis_attempts=lt.3&order=first_seen_at.desc&limit={{ $('Config').first().json.analysis_limit }}",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "options": {
           "timeout": 30000,
           "response": {
@@ -86,7 +86,7 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
@@ -94,7 +94,7 @@
       "executeOnce": true
     },
     {
-      "id": "21673c02-e66b-4b7e-a2cf-87ac27401f51",
+      "id": "7e91f4af-613f-4b7d-ada0-4d9d88625af1",
       "name": "Preparar análises",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -108,7 +108,7 @@
       "alwaysOutputData": true
     },
     {
-      "id": "a979677a-4e6f-4da7-b9a7-626bab70655f",
+      "id": "74ed01a8-92af-48bc-b053-20f5445b1c8c",
       "name": "Tem anúncio para analisar?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
@@ -126,7 +126,7 @@
           },
           "conditions": [
             {
-              "id": "96df5496-bea6-458a-9dfb-44f476aa9fda",
+              "id": "bfce9fb5-c477-4edd-ad51-6346226929f9",
               "leftValue": "={{ $json.ad_id }}",
               "rightValue": "",
               "operator": {
@@ -142,7 +142,7 @@
       }
     },
     {
-      "id": "2b5defcd-7795-48c0-a5d7-3effad036180",
+      "id": "f6a23f39-dce6-4acc-adf8-42a1218f8cc0",
       "name": "Analisar com IA",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -183,7 +183,7 @@
       }
     },
     {
-      "id": "c9ec8e2a-4327-4bed-a2cd-94b12499947c",
+      "id": "9e60c6fa-d682-41b9-b88d-2220bbd89568",
       "name": "Interpretar análise",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -197,7 +197,7 @@
       }
     },
     {
-      "id": "6a59f3c2-0159-4fd8-8d91-12dfde3193a4",
+      "id": "0a3f2157-a0c1-425a-a666-260ed573dd65",
       "name": "Salvar análise",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -209,7 +209,7 @@
         "method": "PATCH",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_ads?id=eq.{{ $json.ad_id }}",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -234,14 +234,14 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
       }
     },
     {
-      "id": "9a23b28f-28ef-4cb3-9fd8-05b2f4d56ee7",
+      "id": "cbb3a0c4-9eb7-4f8a-a603-c1c82689d6d1",
       "name": "Gerar relatório",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -253,7 +253,7 @@
         "method": "POST",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/rpc/spy_weekly_report",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ p_days: $('Config').first().json.report_days }) }}",
@@ -267,7 +267,7 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
@@ -275,7 +275,7 @@
       "executeOnce": true
     },
     {
-      "id": "6f554634-b119-4b33-b07b-1ac73af9763d",
+      "id": "b1479d53-3cca-4fd9-ab4a-caa41269670e",
       "name": "Preparar resumo",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -288,7 +288,7 @@
       }
     },
     {
-      "id": "83f7231e-50ab-4c6f-8556-bded50bdd2fd",
+      "id": "da4a8192-43c4-4aba-bcdb-3dcd1260e7b9",
       "name": "Escrever resumo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -323,7 +323,7 @@
       }
     },
     {
-      "id": "3e815547-8361-47de-ac36-16caa943f498",
+      "id": "ccd67275-70d6-4490-a66b-d1d689cd8188",
       "name": "Montar mensagem",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -336,7 +336,7 @@
       }
     },
     {
-      "id": "10cf11b6-908c-4c5d-8c29-0c82e28cd18b",
+      "id": "2d8f845a-2b54-4f41-8606-7e0f0fc431bb",
       "name": "Salvar resumo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -348,7 +348,7 @@
         "method": "POST",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_digests",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -373,14 +373,14 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
       }
     },
     {
-      "id": "156bcafc-17be-495a-a793-96f90027e6b5",
+      "id": "c8a41b14-e876-44dc-9698-fdfb1ea8eb66",
       "name": "Separar destinatários",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -393,7 +393,7 @@
       }
     },
     {
-      "id": "e2691f3d-d667-48c8-8cbd-000277188689",
+      "id": "241c6263-61a9-4dbb-b5ca-655d9e1bd93d",
       "name": "Enviar no WhatsApp",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,

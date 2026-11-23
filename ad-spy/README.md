@@ -84,11 +84,11 @@ Publique os workflows de um destes dois jeitos.
 
 Depois, em **Credentials** no n8n, troque o valor provisório de cada uma pela chave real.
 
-| Credencial | Tipo | O que colar |
+| Credencial | Campo | O que colar |
 |:--|:--|:--|
-| Espião · Supabase | Custom Auth | `{"headers":{"apikey":"sb_secret_..."}}`. Se você só tiver a chave antiga `service_role` (começa com `eyJ`), acrescente `"Authorization":"Bearer eyJ..."` |
-| Espião · Apify | Header Auth | nome `Authorization`, valor `Bearer apify_api_...` |
-| Espião · OpenAI | OpenAI | a chave `sk-...` |
+| Espião · Supabase | Value | a secret key (`sb_secret_...`) |
+| Espião · Apify | Value | o token (`apify_api_...`) |
+| Espião · OpenAI | API Key | a chave (`sk-...`) |
 
 Cada credencial fica travada no domínio da sua API, então não vaza para outro serviço.
 

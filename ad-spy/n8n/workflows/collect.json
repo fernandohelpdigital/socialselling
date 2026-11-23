@@ -2,7 +2,7 @@
   "name": "Espião de Anúncios · 1. Coleta semanal",
   "nodes": [
     {
-      "id": "9f8072b8-70ee-4fd6-a1a4-8eefe7bed4d5",
+      "id": "a1024660-7674-4629-a72a-6a181b1b9e2e",
       "name": "Sobre este workflow",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -18,7 +18,7 @@
       }
     },
     {
-      "id": "a3539e6f-80fe-4649-b220-67d3d70085dd",
+      "id": "0f0b5a3e-65ab-4a32-8058-d2f3e532c578",
       "name": "Toda segunda às 5h",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
@@ -38,7 +38,7 @@
       }
     },
     {
-      "id": "76518540-4dec-430e-92dc-2194dae41a80",
+      "id": "ff6fab62-4469-4758-8418-f50aab244f1b",
       "name": "Executar manualmente",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -49,7 +49,7 @@
       "parameters": {}
     },
     {
-      "id": "3e55a582-2430-4451-9ed4-938f47d62ada",
+      "id": "72135b1f-4647-4aed-ba25-c8372374e2ab",
       "name": "Config",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -62,7 +62,7 @@
       }
     },
     {
-      "id": "3590d497-4f00-4c0b-ad0f-2b426fef31ec",
+      "id": "3243b15e-4e80-4414-812a-7b0cf382283c",
       "name": "Abrir execução",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -74,7 +74,7 @@
         "method": "POST",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_runs",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -97,14 +97,14 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
       }
     },
     {
-      "id": "0e642cb5-7d79-4de7-ad9a-84a5faffff43",
+      "id": "72beddee-dc85-46db-bcf6-1b805043c236",
       "name": "Buscar concorrentes",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -116,7 +116,7 @@
         "method": "GET",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_competitors?active=eq.true&select=id,name,domain,facebook_url,linkedin_slug&order=name",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "options": {
           "timeout": 30000,
           "response": {
@@ -128,7 +128,7 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
@@ -136,7 +136,7 @@
       "executeOnce": true
     },
     {
-      "id": "972b08d3-1fc9-4b92-bbec-60f9dbc7adfc",
+      "id": "3793e1ea-071c-4840-b4c7-169a661eeaea",
       "name": "Buscar palavras-chave",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -148,7 +148,7 @@
         "method": "GET",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_keywords?active=eq.true&select=keyword,platforms&order=keyword",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "options": {
           "timeout": 30000,
           "response": {
@@ -160,7 +160,7 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
@@ -168,7 +168,7 @@
       "executeOnce": true
     },
     {
-      "id": "de9f65ba-bec4-40b4-a2e2-514d75a98b2a",
+      "id": "d7db37a8-b2ee-4c85-87a4-49926292c765",
       "name": "Montar coletas",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -181,7 +181,7 @@
       }
     },
     {
-      "id": "cde30e6b-6d3c-4351-af46-3cead3d248d5",
+      "id": "ccbb418b-0aca-454a-b661-d489c162c7df",
       "name": "Coletar no Apify",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -193,7 +193,7 @@
         "method": "POST",
         "url": "=https://api.apify.com/v2/acts/{{ $json.actor }}/run-sync-get-dataset-items?timeout={{ $json.timeout_secs }}&maxTotalChargeUsd={{ $json.max_charge_usd }}&clean=1",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "genericAuthType": "httpQueryAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.input) }}",
@@ -216,14 +216,14 @@
         }
       },
       "credentials": {
-        "httpHeaderAuth": {
+        "httpQueryAuth": {
           "id": "",
           "name": "Espião · Apify"
         }
       }
     },
     {
-      "id": "df77e7c8-682b-4406-8db7-a37ccbf5d204",
+      "id": "c26709be-a675-40a2-9664-07aa8a058ecb",
       "name": "Normalizar resultados",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -237,7 +237,7 @@
       }
     },
     {
-      "id": "8926fd7c-68bc-4727-a506-8177a9890c94",
+      "id": "0f455d15-6dd7-47ba-9462-a0bbfcf93f6a",
       "name": "Gravar no Supabase",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -249,7 +249,7 @@
         "method": "POST",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/rpc/spy_ingest",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json) }}",
@@ -265,14 +265,14 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }
       }
     },
     {
-      "id": "e64d9a5c-2966-46f1-9600-9b733ab5d028",
+      "id": "9dacc64b-1552-43a8-b69e-0e1d1a31d528",
       "name": "Resumir execução",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -285,7 +285,7 @@
       }
     },
     {
-      "id": "320ca5e8-8296-4b85-b4db-99b3e7638cc5",
+      "id": "c2586dd0-df93-4e41-bab8-4878cbedb8ab",
       "name": "Fechar execução",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -297,7 +297,7 @@
         "method": "PATCH",
         "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_runs?id=eq.{{ $json.run_id }}",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
+        "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -320,7 +320,7 @@
         }
       },
       "credentials": {
-        "httpCustomAuth": {
+        "httpHeaderAuth": {
           "id": "",
           "name": "Espião · Supabase"
         }

@@ -102,8 +102,10 @@ function connect(pairs) {
 
 function auths(credentials) {
   return {
-    supabase: { kind: 'generic', type: 'httpCustomAuth', credential: credentials.supabase },
-    apify: { kind: 'generic', type: 'httpHeaderAuth', credential: credentials.apify },
+    // Each credential is a single field to paste: Supabase secret key as the apikey header,
+    // Apify token as the ?token= query parameter.
+    supabase: { kind: 'generic', type: 'httpHeaderAuth', credential: credentials.supabase },
+    apify: { kind: 'generic', type: 'httpQueryAuth', credential: credentials.apify },
     openai: { kind: 'predefined', type: 'openAiApi', credential: credentials.openai },
     uazapi: { kind: 'generic', type: 'httpHeaderAuth', credential: credentials.uazapi },
   };

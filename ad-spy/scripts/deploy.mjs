@@ -45,18 +45,19 @@ function placeholderCredential(key, name) {
   const supabaseHost = hostOf(local.collect.supabase_url);
   const specs = {
     supabase: {
-      type: 'httpCustomAuth',
+      type: 'httpHeaderAuth',
       data: {
-        json: JSON.stringify({ headers: { apikey: 'COLE_AQUI_A_SECRET_KEY_DO_SUPABASE' } }, null, 2),
+        name: 'apikey',
+        value: 'COLE_AQUI_A_SECRET_KEY_DO_SUPABASE',
         allowedHttpRequestDomains: 'domains',
         allowedDomains: supabaseHost,
       },
     },
     apify: {
-      type: 'httpHeaderAuth',
+      type: 'httpQueryAuth',
       data: {
-        name: 'Authorization',
-        value: 'Bearer COLE_AQUI_O_TOKEN_DO_APIFY',
+        name: 'token',
+        value: 'COLE_AQUI_O_TOKEN_DO_APIFY',
         allowedHttpRequestDomains: 'domains',
         allowedDomains: 'api.apify.com',
       },
