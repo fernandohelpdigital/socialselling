@@ -1,0 +1,41 @@
+{
+  "enabledPlugins": {
+    "hyperframes@hyperframes": true,
+    "rea-video@rea-video": true,
+    "lemo-opuscar@lemolab": true,
+    "pixelfx@pixelfx": true,
+    "mcp-for-blender@mcp-for-blender": true
+  },
+  "extraKnownMarketplaces": {
+    "hyperframes": {
+      "source": {
+        "source": "github",
+        "repo": "heygen-com/hyperframes"
+      }
+    },
+    "rea-video": {
+      "source": {
+        "source": "github",
+        "repo": "JuneYaooo/rea-video"
+      }
+    },
+    "lemolab": {
+      "source": {
+        "source": "github",
+        "repo": "lemomo-ai/lemo-opuscar"
+      }
+    },
+    "pixelfx": {
+      "source": {
+        "source": "github",
+        "repo": "patch-gg/pixelfx"
+      }
+    },
+    "mcp-for-blender": {
+      "source": {
+        "source": "github",
+        "repo": "ahujasid/mcp-for-blender"
+      }
+    }
+  }
+}
