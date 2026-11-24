@@ -1,0 +1,49 @@
+[
+ {
+  "creativeId": "CR09405416287280037889",
+  "advertiserId": "AR16735076323512287233",
+  "advertiserName": "Nike, Inc.",
+  "domain": "nike.com",
+  "format": "IMAGE",
+  "firstShown": "2022-11-30T15:26:06.000Z",
+  "lastShown": "2026-06-10T00:00:00.000Z",
+  "shownForDays": 898,
+  "previewType": "image",
+  "imageUrl": "https://tpc.googlesyndication.com/archive/simgad/15682570092434089175",
+  "previewUrl": null,
+  "width": 380,
+  "height": 467,
+  "googleCreativeId": "761207694135",
+  "googleCustomerId": "1287649103",
+  "adGroupId": "181405790069",
+  "versionId": null,
+  "adUrl": "https://adstransparency.google.com/advertiser/AR16735076323512287233/creative/CR09405416287280037889?region=US",
+  "region": "US",
+  "advertiserCountry": "US",
+  "advertiserLegalName": "Nike, Inc.",
+  "advertiserVerified": true
+ },
+ {
+  "advertiserName": "Hubspot, Inc.",
+  "format": "TEXT",
+  "adTextKind": "search",
+  "adHeadline": "HubSpot AI Sales Prospecting - Automate Lead Research - Leading LLM Technology",
+  "adDescription": "Automate prospect research and focus on what matters: closing deals and growing revenue.",
+  "adDisplayUrl": "www.hubspot.com/",
+  "adBusinessName": null,
+  "adTextLines": [
+   "HubSpot AI Sales Prospecting - Automate Lead Research - Leading LLM Technology",
+   "Automate prospect research and focus on what matters: closing deals and growing revenue.",
+   "HubSpot",
+   "www.hubspot.com/"
+  ],
+  "adHeadlineDynamic": false,
+  "creativeId": "CR11111111111111111111",
+  "advertiserId": "AR22222222222222222222",
+  "domain": "hubspot.com",
+  "firstShown": "2026-09-01T00:00:00.000Z",
+  "lastShown": "2026-11-20T00:00:00.000Z",
+  "adUrl": "https://adstransparency.google.com/advertiser/AR22222222222222222222/creative/CR11111111111111111111?region=BR",
+  "region": "BR"
+ }
+]

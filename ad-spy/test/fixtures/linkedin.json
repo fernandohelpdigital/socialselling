@@ -1,0 +1,124 @@
+[
+ {
+  "ad_id": "1525076296",
+  "detail_url": "https://www.linkedin.com/ad-library/detail/1525076296",
+  "advertiser": "NVIDIA",
+  "advertiser_url": null,
+  "payer": null,
+  "format": "Single Image Ad",
+  "creative_type": "SPONSORED_STATUS_UPDATE",
+  "headline": "Securing the AI Era, Together",
+  "body": null,
+  "body_preview": "NVIDIA and industry leaders have launched the Open Secure AI Alliance to develop new techniques and tools to safeguard s…",
+  "image_urls": [
+   "https://media.licdn.com/dms/image/v2/D5610AQHII2iv5XLwZg/image-shrink_1280/B56Z.kljQVHUAc-/0/1785172735260/osaia-logo-garden_press-kit_1200x6282png?e=2147483647&v=beta&t=gfETc_HyA-Il1pVCVWH1uBJhtPyFzt9lDWIlNF_3eec"
+  ],
+  "video_urls": [],
+  "ran_from": null,
+  "ran_to": null,
+  "impressions_display": null,
+  "impressions_min": null,
+  "impressions_max": null,
+  "impressions_by_country": null,
+  "targeting_segments": null,
+  "targeting_parameters": null,
+  "promoted_by": null,
+  "query": "advertiser:nvidia",
+  "has_details": false,
+  "advertiser_logo_url": "https://media.licdn.com/dms/image/v2/D560BAQGV36q2EowSyw/company-logo_100_100/company-logo_100_100/0/1724881581208/nvidia_logo?e=1788998400&v=beta&t=2EEfBsvNoOg8yexq_-_PSbToRaRAOOr5Dpfc8YWTIho",
+  "carousel_images": [],
+  "message_sender": null,
+  "cta": null,
+  "message_buttons": null,
+  "days_running": null,
+  "is_active": null
+ },
+ {
+  "ad_id": "1279725554",
+  "detail_url": "https://www.linkedin.com/ad-library/detail/1279725554",
+  "advertiser": "Maric Philibert",
+  "advertiser_url": "https://www.linkedin.com/company/4999584",
+  "payer": "DOCTOLIB SAS",
+  "format": "Video Ad",
+  "creative_type": "SPONSORED_VIDEO",
+  "headline": null,
+  "body": "La meilleure technologie en santé est celle qui rend du temps aux soignants, leur permet de garder le contrôle, et se fait oublier. L'attractivité et la qualité au travail s'en trouvent améliorées. C'est l'intérêt de l'Assistant de consultation de Doctolib. Disponible pour les cabinets, les centres de santé et les hôpitaux.",
+  "body_preview": "La meilleure technologie en santé est celle qui rend du temps aux soignants, leur permet de garder le contrôle, et se f…",
+  "image_urls": [],
+  "video_urls": [
+   "https://dms.licdn.com/playlist/vid/v2/D4E05AQElNwCRP2JoQg/mp4-640p-30fp-crf28/B4EZ2w64P7J8Bw-/0/1776789729248?e=2147483647&v=beta&t=nYQIDCmIcXIMVJl-qbctC27-CqaaDsR8Aord5ykuQC4",
+   "https://dms.licdn.com/playlist/vid/v2/D4E05AQElNwCRP2JoQg/mp4-720p-30fp-crf28/B4EZ2w64P7J8CI-/0/1776789733165?e=2147483647&v=beta&t=Ny8CWClU5AH0aAIXjxlOy7OsiPUbSs8XLfcaBBZo3pk"
+  ],
+  "ran_from": "Apr 23, 2026",
+  "ran_to": "Apr 30, 2026",
+  "impressions_display": "30k-50k",
+  "impressions_min": 30000,
+  "impressions_max": 50000,
+  "impressions_by_country": [
+   {
+    "country": "France",
+    "share": "100%"
+   },
+   {
+    "country": "Switzerland",
+    "share": "less than 1%"
+   },
+   {
+    "country": "Belgium",
+    "share": "less than 1%"
+   },
+   {
+    "country": "Morocco",
+    "share": "less than 1%"
+   },
+   {
+    "country": "Monaco",
+    "share": "less than 1%"
+   },
+   {
+    "country": "Algeria",
+    "share": "less than 1%"
+   }
+  ],
+  "targeting_segments": [
+   "Targeting includes Français",
+   "Targeting includes France"
+  ],
+  "targeting_parameters": {
+   "Audience": {
+    "targeted": false,
+    "excluded": false
+   },
+   "Demographic": {
+    "targeted": false,
+    "excluded": false
+   },
+   "Company": {
+    "targeted": true,
+    "excluded": true
+   },
+   "Education": {
+    "targeted": false,
+    "excluded": false
+   },
+   "Job": {
+    "targeted": true,
+    "excluded": true
+   },
+   "Member Interests and Traits": {
+    "targeted": false,
+    "excluded": false
+   }
+  },
+  "promoted_by": "Doctolib",
+  "query": "advertiser:doctolib",
+  "has_details": true,
+  "advertiser_logo_url": null,
+  "carousel_images": [],
+  "message_sender": null,
+  "cta": null,
+  "message_buttons": [],
+  "days_running": 8,
+  "is_active": false
+ }
+]

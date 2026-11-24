@@ -1,0 +1,622 @@
+[
+ {
+  "inputUrl": "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=total_impressions&sort_data[direction]=desc&view_all_page_id=16453004404",
+  "pageID": "16453004404",
+  "adArchiveID": "1229350099285014",
+  "startDateFormatted": "2026-03-16T07:00:00.000Z",
+  "endDateFormatted": "2026-07-09T07:00:00.000Z",
+  "adArchiveId": "1229350099285014",
+  "collationCount": 1,
+  "collationId": "936389910871080",
+  "pageId": "16453004404",
+  "snapshot": {
+   "brandedContent": null,
+   "pageId": "16453004404",
+   "pageIsDeleted": false,
+   "pageProfileUri": "https://www.facebook.com/sephora/",
+   "rootResharedPost": null,
+   "byline": null,
+   "disclaimerLabel": null,
+   "pageName": "Sephora",
+   "pageProfilePictureUrl": "https://scontent.xx.fbcdn.net/v/t39.35426-6/420097314_profile.jpg",
+   "event": null,
+   "caption": "sephora.com",
+   "ctaText": "Download",
+   "cards": [
+    {
+     "body": "Major beauty benefits are waiting for you on the app 💞",
+     "ctaType": "DOWNLOAD",
+     "caption": "",
+     "linkDescription": "Download now",
+     "linkUrl": "https://www.sephora.com/beauty/app",
+     "title": "Our App = Your Beauty BFF",
+     "ctaText": "Download",
+     "videoHdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQPloWW025_hd.mp4",
+     "videoPreviewImageUrl": "https://scontent.xx.fbcdn.net/v/t39.35426-6/420071819_preview.jpg",
+     "videoSdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQNBDatym5_sd.mp4",
+     "watermarkedVideoHdUrl": "",
+     "watermarkedVideoSdUrl": "",
+     "imageCrops": [],
+     "originalImageUrl": null,
+     "resizedImageUrl": null,
+     "watermarkedResizedImageUrl": null
+    },
+    {
+     "body": "Major beauty benefits are waiting for you on the app 💞",
+     "ctaType": "DOWNLOAD",
+     "caption": "",
+     "linkDescription": "Download now",
+     "linkUrl": "https://www.sephora.com/beauty/app",
+     "title": "Our App = Your Beauty BFF",
+     "ctaText": "Download",
+     "videoHdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQP6ka8Ul6RD_hd.mp4",
+     "videoPreviewImageUrl": "https://scontent.xx.fbcdn.net/v/t39.35426-6/421895314_preview.jpg",
+     "videoSdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQNthR9RJnca_sd.mp4",
+     "watermarkedVideoHdUrl": "",
+     "watermarkedVideoSdUrl": "",
+     "imageCrops": [],
+     "originalImageUrl": null,
+     "resizedImageUrl": null,
+     "watermarkedResizedImageUrl": null
+    },
+    {
+     "body": "Major beauty benefits are waiting for you on the app 💞",
+     "ctaType": "DOWNLOAD",
+     "caption": "",
+     "linkDescription": "Download now",
+     "linkUrl": "https://www.sephora.com/beauty/app",
+     "title": "Our App = Your Beauty BFF",
+     "ctaText": "Download",
+     "videoHdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQNzU2WVmzmn_hd.mp4",
+     "videoPreviewImageUrl": "https://scontent.xx.fbcdn.net/v/t39.35426-6/420071819_preview.jpg",
+     "videoSdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQP3AEf0mm7j_sd.mp4",
+     "watermarkedVideoHdUrl": "",
+     "watermarkedVideoSdUrl": "",
+     "imageCrops": [],
+     "originalImageUrl": null,
+     "resizedImageUrl": null,
+     "watermarkedResizedImageUrl": null
+    }
+   ],
+   "body": {
+    "text": "{{product.brand}}"
+   },
+   "ctaType": "DOWNLOAD",
+   "displayFormat": "DCO",
+   "linkDescription": "{{product.description}}",
+   "linkUrl": "https://www.sephora.com/beauty/app",
+   "images": [],
+   "pageCategories": [
+    "Health/beauty",
+    "Beauty Supplies",
+    "Health & Beauty"
+   ],
+   "pageLikeCount": 20327208,
+   "title": "{{product.name}}",
+   "videos": [],
+   "isReshared": false,
+   "extraLinks": [],
+   "extraTexts": [],
+   "extraImages": [],
+   "extraVideos": [],
+   "countryIsoCode": null,
+   "brazilTaxId": null,
+   "additionalInfo": null,
+   "ecCertificates": []
+  },
+  "isActive": true,
+  "hasUserReported": false,
+  "reportCount": null,
+  "menuItems": [],
+  "stateMediaRunLabel": null,
+  "pageIsDeleted": false,
+  "pageName": "Sephora",
+  "impressionsWithIndex": {
+   "impressionsText": null,
+   "impressionsIndex": -1
+  },
+  "gatedType": "ELIGIBLE",
+  "categories": [
+   "UNKNOWN"
+  ],
+  "isAaaEligible": false,
+  "containsDigitalCreatedMedia": false,
+  "reachEstimate": null,
+  "currency": "",
+  "spend": null,
+  "endDate": 1783580400,
+  "publisherPlatform": [
+   "FACEBOOK",
+   "INSTAGRAM"
+  ],
+  "startDate": 1773644400,
+  "containsSensitiveContent": false,
+  "totalActiveTime": null,
+  "regionalRegulationData": {
+   "finserv": {
+    "isDeemedFinserv": false,
+    "isLimitedDelivery": false
+   },
+   "twAntiScam": {
+    "isLimitedDelivery": false
+   }
+  },
+  "hideDataStatus": "NONE",
+  "fevInfo": null,
+  "adId": null,
+  "targetedOrReachedCountries": [],
+  "ad_details": {
+   "advertiser": {
+    "page": {
+     "about": {
+      "text": "We Belong to Something Beautiful"
+     },
+     "is_delegate_page_with_linked_primary_profile": false,
+     "id": "16453004404"
+    },
+    "ad_library_page_info": {
+     "page_spend": {
+      "current_week": null,
+      "lifetime_by_disclaimer": [],
+      "weekly_by_disclaimer": [],
+      "is_political_page": false
+     },
+     "page_info": {
+      "entity_type": "PERSON_PROFILE",
+      "ig_followers": 22663627,
+      "ig_username": "sephora",
+      "ig_verification": true,
+      "likes": 20327208,
+      "page_alias": "sephora",
+      "page_category": "Health/beauty",
+      "page_cover_photo": "https://scontent.xx.fbcdn.net/v/t39.30808-6/481205189_cover.jpg",
+      "page_id": "16453004404",
+      "page_is_deleted": false,
+      "page_is_restricted": false,
+      "page_name": "Sephora",
+      "page_profile_uri": "https://www.facebook.com/sephora/",
+      "page_verification": "BLUE_VERIFIED",
+      "profile_photo": "https://scontent.xx.fbcdn.net/v/t39.30808-1/381282579_profile.jpg",
+      "is_profile_page": false
+     }
+    }
+   },
+   "violation_types": [],
+   "verified_voice_context": null
+  },
+  "pageInfo": {
+   "adLibrarySystemStatus": {
+    "systemStatus": {
+     "status": "NO_KNOWN_ISSUES",
+     "activeIssues": [
+      {
+       "product": "Ad Library",
+       "status": "NO_KNOWN_ISSUES"
+      },
+      {
+       "product": "Ad Library Report",
+       "status": "NO_KNOWN_ISSUES"
+      },
+      {
+       "product": "Ad Library API",
+       "status": "NO_KNOWN_ISSUES"
+      },
+      {
+       "product": "Branded Content",
+       "status": "NO_KNOWN_ISSUES"
+      }
+     ]
+    }
+   },
+   "xfbAdLibraryIsCaptchaRequired": false,
+   "adLibraryPageInfo": {
+    "pageInfo": {
+     "relatedPages": [
+      {
+       "categoryName": "Health/beauty",
+       "country": "CZ",
+       "countryName": "Czech Republic",
+       "pageId": "141422642653037",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/343736955_cz.jpg"
+      },
+      {
+       "categoryName": "Health/beauty",
+       "country": "CA",
+       "countryName": "Canada",
+       "pageId": "1651784498372756",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/381525849_ca.jpg"
+      },
+      {
+       "categoryName": "Health/beauty",
+       "country": "RO",
+       "countryName": "Romania",
+       "pageId": "216565628451130",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/431141575_ro.jpg"
+      },
+      {
+       "categoryName": "Health/beauty",
+       "country": "GR",
+       "countryName": "Greece",
+       "pageId": "127637600614842",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/345646932_gr.jpg"
+      }
+     ],
+     "hasBlankAds": false,
+     "hiddenAds": 0,
+     "pageIsDeleted": false
+    }
+   },
+   "page": {
+    "name": "Sephora",
+    "id": "16453004404",
+    "url": "https://facebook.com/sephora",
+    "about": {
+     "text": "We Belong to Something Beautiful"
+    },
+    "isDelegatePageWithLinkedPrimaryProfile": false,
+    "confirmedPageOwner": {
+     "name": "SEPHORA USA, INC.",
+     "information": {
+      "address": {
+       "city": "SAN FRANCISCO",
+       "country": "United States of America",
+       "postalCode": "94105",
+       "state": "CA"
+      },
+      "phoneNumber": null
+     },
+     "id": "10152404065929405"
+    },
+    "pagesTransparencyInfo": {
+     "historyItems": [
+      {
+       "eventTime": 1665135415,
+       "itemType": "NAME_CHANGE",
+       "eventTimeFormatted": "2022-10-07T09:36:55.000Z"
+      },
+      {
+       "eventTime": 1446222683,
+       "itemType": "NAME_CHANGE",
+       "eventTimeFormatted": "2015-10-30T16:31:23.000Z"
+      },
+      {
+       "eventTime": 1213117433,
+       "itemType": "CREATION",
+       "eventTimeFormatted": "2008-06-10T17:03:53.000Z"
+      }
+     ],
+     "stateMediaCountryLabel": null,
+     "id": "dHJhbnNwYXJlbmN5OjE2NDUzMDA0NDA0",
+     "adminLocations": {
+      "adminCountryCounts": [
+       {
+        "count": 50,
+        "country": {
+         "isoName": "United States",
+         "id": "109078688522"
+        }
+       },
+       {
+        "count": 5,
+        "country": {
+         "isoName": "India",
+         "id": "92061054329"
+        }
+       },
+       {
+        "count": 4,
+        "country": {
+         "isoName": "Brazil",
+         "id": "90994063252"
+        }
+       },
+       {
+        "count": 4,
+        "country": {
+         "isoName": "Canada",
+         "id": "111030136976"
+        }
+       }
+      ]
+     }
+    },
+    "adLibraryPageTargetingInsight": null
+   },
+   "adLibraryUser": null
+  }
+ },
+ {
+  "inputUrl": "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=total_impressions&sort_data[direction]=desc&view_all_page_id=16453004404",
+  "pageID": "16453004404",
+  "adArchiveID": "1310216507331960",
+  "startDateFormatted": "2026-06-07T07:00:00.000Z",
+  "endDateFormatted": "2026-07-07T07:00:00.000Z",
+  "adArchiveId": "1310216507331960",
+  "collationCount": null,
+  "collationId": "1968588860514082",
+  "pageId": "16453004404",
+  "snapshot": {
+   "brandedContent": null,
+   "pageId": "16453004404",
+   "pageIsDeleted": false,
+   "pageProfileUri": "https://www.facebook.com/sephora/",
+   "rootResharedPost": null,
+   "byline": null,
+   "disclaimerLabel": null,
+   "pageName": "Sephora",
+   "pageProfilePictureUrl": "https://scontent.xx.fbcdn.net/v/t39.35426-6/715098644_profile.jpg",
+   "event": null,
+   "caption": "SEPHORA.COM",
+   "ctaText": "Shop now",
+   "cards": [],
+   "body": {
+    "text": "The perfect new SPF, according to Cazzie David. Who may or may not be a sunscreen expert."
+   },
+   "ctaType": "SHOP_NOW",
+   "displayFormat": "VIDEO",
+   "linkDescription": "Get the latest at Sephora",
+   "linkUrl": "https://www.sephora.com/shop/exclusive-products",
+   "images": [],
+   "pageCategories": [
+    "Health/beauty"
+   ],
+   "pageLikeCount": 20327208,
+   "title": "New. Hot. Only at Sephora.",
+   "videos": [
+    {
+     "videoHdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQN4x3da6BVd_hd.mp4",
+     "videoPreviewImageUrl": "https://scontent.xx.fbcdn.net/v/t39.35426-6/717186269_preview.jpg",
+     "videoSdUrl": "https://video.xx.fbcdn.net/o1/v/t2/f2/AQMVPKpSiSsO_sd.mp4",
+     "watermarkedVideoHdUrl": null,
+     "watermarkedVideoSdUrl": null
+    }
+   ],
+   "isReshared": false,
+   "extraLinks": [],
+   "extraTexts": [],
+   "extraImages": [],
+   "extraVideos": [],
+   "countryIsoCode": null,
+   "brazilTaxId": null,
+   "additionalInfo": null,
+   "ecCertificates": []
+  },
+  "isActive": true,
+  "hasUserReported": false,
+  "reportCount": null,
+  "menuItems": [],
+  "stateMediaRunLabel": null,
+  "pageIsDeleted": false,
+  "pageName": "Sephora",
+  "impressionsWithIndex": {
+   "impressionsText": null,
+   "impressionsIndex": -1
+  },
+  "gatedType": "ELIGIBLE",
+  "categories": [
+   "UNKNOWN"
+  ],
+  "isAaaEligible": false,
+  "containsDigitalCreatedMedia": false,
+  "reachEstimate": null,
+  "currency": "",
+  "spend": null,
+  "endDate": 1783407600,
+  "publisherPlatform": [
+   "FACEBOOK",
+   "INSTAGRAM",
+   "THREADS"
+  ],
+  "startDate": 1780815600,
+  "containsSensitiveContent": false,
+  "totalActiveTime": null,
+  "regionalRegulationData": {
+   "finserv": {
+    "isDeemedFinserv": false,
+    "isLimitedDelivery": false
+   },
+   "twAntiScam": {
+    "isLimitedDelivery": false
+   }
+  },
+  "hideDataStatus": "NONE",
+  "fevInfo": null,
+  "adId": null,
+  "targetedOrReachedCountries": [],
+  "ad_details": {
+   "advertiser": {
+    "page": {
+     "about": {
+      "text": "We Belong to Something Beautiful"
+     },
+     "is_delegate_page_with_linked_primary_profile": false,
+     "id": "16453004404"
+    },
+    "ad_library_page_info": {
+     "page_spend": {
+      "current_week": null,
+      "lifetime_by_disclaimer": [],
+      "weekly_by_disclaimer": [],
+      "is_political_page": false
+     },
+     "page_info": {
+      "entity_type": "PERSON_PROFILE",
+      "ig_followers": 22663627,
+      "ig_username": "sephora",
+      "ig_verification": true,
+      "likes": 20327485,
+      "page_alias": "sephora",
+      "page_category": "Health/beauty",
+      "page_cover_photo": "https://scontent.xx.fbcdn.net/v/t39.30808-6/481205189_cover.jpg",
+      "page_id": "16453004404",
+      "page_is_deleted": false,
+      "page_is_restricted": false,
+      "page_name": "Sephora",
+      "page_profile_uri": "https://www.facebook.com/sephora/",
+      "page_verification": "BLUE_VERIFIED",
+      "profile_photo": "https://scontent.xx.fbcdn.net/v/t39.30808-1/381282579_profile.jpg",
+      "is_profile_page": false
+     }
+    }
+   },
+   "violation_types": [],
+   "verified_voice_context": null
+  },
+  "pageInfo": {
+   "adLibrarySystemStatus": {
+    "systemStatus": {
+     "status": "NO_KNOWN_ISSUES",
+     "activeIssues": [
+      {
+       "product": "Ad Library",
+       "status": "NO_KNOWN_ISSUES"
+      },
+      {
+       "product": "Ad Library Report",
+       "status": "NO_KNOWN_ISSUES"
+      },
+      {
+       "product": "Ad Library API",
+       "status": "NO_KNOWN_ISSUES"
+      },
+      {
+       "product": "Branded Content",
+       "status": "NO_KNOWN_ISSUES"
+      }
+     ]
+    }
+   },
+   "xfbAdLibraryIsCaptchaRequired": false,
+   "adLibraryPageInfo": {
+    "pageInfo": {
+     "relatedPages": [
+      {
+       "categoryName": "Health/beauty",
+       "country": "CZ",
+       "countryName": "Czech Republic",
+       "pageId": "141422642653037",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/343736955_cz.jpg"
+      },
+      {
+       "categoryName": "Health/beauty",
+       "country": "CA",
+       "countryName": "Canada",
+       "pageId": "1651784498372756",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/381525849_ca.jpg"
+      },
+      {
+       "categoryName": "Health/beauty",
+       "country": "RO",
+       "countryName": "Romania",
+       "pageId": "216565628451130",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/431141575_ro.jpg"
+      },
+      {
+       "categoryName": "Health/beauty",
+       "country": "GR",
+       "countryName": "Greece",
+       "pageId": "127637600614842",
+       "pageName": "SEPHORA",
+       "pageVerification": "BLUE_VERIFIED",
+       "profileImageUri": "https://scontent.xx.fbcdn.net/v/t39.30808-1/345646932_gr.jpg"
+      }
+     ],
+     "hasBlankAds": false,
+     "hiddenAds": 0,
+     "pageIsDeleted": false
+    }
+   },
+   "page": {
+    "name": "Sephora",
+    "id": "16453004404",
+    "url": "https://facebook.com/sephora",
+    "about": {
+     "text": "We Belong to Something Beautiful"
+    },
+    "isDelegatePageWithLinkedPrimaryProfile": false,
+    "confirmedPageOwner": {
+     "name": "SEPHORA USA, INC.",
+     "information": {
+      "address": {
+       "city": "SAN FRANCISCO",
+       "country": "United States of America",
+       "postalCode": "94105",
+       "state": "CA"
+      },
+      "phoneNumber": null
+     },
+     "id": "10152404065929405"
+    },
+    "pagesTransparencyInfo": {
+     "historyItems": [
+      {
+       "eventTime": 1665135415,
+       "itemType": "NAME_CHANGE",
+       "eventTimeFormatted": "2022-10-07T09:36:55.000Z"
+      },
+      {
+       "eventTime": 1446222683,
+       "itemType": "NAME_CHANGE",
+       "eventTimeFormatted": "2015-10-30T16:31:23.000Z"
+      },
+      {
+       "eventTime": 1213117433,
+       "itemType": "CREATION",
+       "eventTimeFormatted": "2008-06-10T17:03:53.000Z"
+      }
+     ],
+     "stateMediaCountryLabel": null,
+     "id": "dHJhbnNwYXJlbmN5OjE2NDUzMDA0NDA0",
+     "adminLocations": {
+      "adminCountryCounts": [
+       {
+        "count": 50,
+        "country": {
+         "isoName": "United States",
+         "id": "109078688522"
+        }
+       },
+       {
+        "count": 5,
+        "country": {
+         "isoName": "India",
+         "id": "92061054329"
+        }
+       },
+       {
+        "count": 4,
+        "country": {
+         "isoName": "Brazil",
+         "id": "90994063252"
+        }
+       },
+       {
+        "count": 4,
+        "country": {
+         "isoName": "Canada",
+         "id": "111030136976"
+        }
+       }
+      ]
+     }
+    },
+    "adLibraryPageTargetingInsight": null
+   },
+   "adLibraryUser": null
+  }
+ }
+]

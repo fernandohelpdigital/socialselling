@@ -1,0 +1,460 @@
+{
+  "name": "Espião de Anúncios · 1. Coleta semanal",
+  "nodes": [
+    {
+      "id": "a1024660-7674-4629-a72a-6a181b1b9e2e",
+      "name": "Sobre este workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -340
+      ],
+      "parameters": {
+        "content": "## Espião de Anúncios · coleta\nToda segunda às 5h busca os anúncios ativos dos concorrentes (tabela spy_competitors) na Meta, no LinkedIn e no Google, e procura anunciantes novos pelas palavras-chave (spy_keywords).\n\nCada anúncio é gravado uma vez em spy_ads. Os que sumiram da biblioteca são marcados como pausados.\n\nPara testar, clique em **Executar workflow**. Uma coleta completa leva de 15 a 40 minutos, conforme o número de concorrentes.\n\nConcorrentes e palavras-chave se editam direto no Supabase (Table Editor).",
+        "width": 520,
+        "height": 300,
+        "color": 7
+      }
+    },
+    {
+      "id": "0f0b5a3e-65ab-4a32-8058-d2f3e532c578",
+      "name": "Toda segunda às 5h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 5 * * 1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ff6fab62-4469-4758-8418-f50aab244f1b",
+      "name": "Executar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        180
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "72135b1f-4647-4aed-ba25-c8372374e2ab",
+      "name": "Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Configuração da coleta do Espião de Anúncios.\n// Edite só os valores abaixo. As chaves ficam nas credenciais do n8n, nunca aqui.\nconst config = {\n  // Projeto do Supabase onde você rodou o 001_schema.sql\n  supabase_url: \"https://SEU-PROJETO.supabase.co\",\n\n  // País dos anúncios (Meta por palavra-chave, LinkedIn e Google)\n  country: \"BR\",\n\n  // Janela de busca em dias no LinkedIn e no Google (a Meta traz só os ativos)\n  lookback_days: 14,\n\n  // Máximo de anúncios por concorrente na Meta\n  meta_results_limit: 30,\n\n  // Máximo de anúncios por concorrente no LinkedIn\n  linkedin_results_limit: 30,\n\n  // Máximo de anúncios por concorrente no Google\n  google_results_limit: 20,\n\n  // Máximo de anúncios por palavra-chave (descoberta de anunciantes novos)\n  keyword_results_limit: 30,\n\n  // LinkedIn com detalhes traz o texto completo e o CTA (custa o dobro por anúncio)\n  linkedin_include_details: true,\n\n  // Teto de gasto no Apify por coleta individual, em dólar\n  max_charge_usd_per_job: 0.5,\n\n  // Tempo máximo de cada coleta no Apify, em segundos (o limite do Apify é 300)\n  apify_timeout_secs: 280,\n\n  // Coletores do Apify usados em cada plataforma\n  actors: {\n    \"meta\": \"jmlp~meta-ad-library-scraper\",\n    \"linkedin\": \"alexmorain~linkedin-ad-library-scraper\",\n    \"google\": \"scrapesage~google-ads-transparency-scraper\"\n  },\n};\n\nreturn [{ json: config }];\n"
+      }
+    },
+    {
+      "id": "3243b15e-4e80-4414-812a-7b0cf382283c",
+      "name": "Abrir execução",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        440,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_runs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: \"running\" }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      }
+    },
+    {
+      "id": "72beddee-dc85-46db-bcf6-1b805043c236",
+      "name": "Buscar concorrentes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        660,
+        80
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_competitors?active=eq.true&select=id,name,domain,facebook_url,linkedin_slug&order=name",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "3793e1ea-071c-4840-b4c7-169a661eeaea",
+      "name": "Buscar palavras-chave",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        880,
+        80
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_keywords?active=eq.true&select=keyword,platforms&order=keyword",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "d7db37a8-b2ee-4c85-87a4-49926292c765",
+      "name": "Montar coletas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Builds one Apify job per (competitor x platform) and per (keyword x platform).\n\nconst DAY_MS = 24 * 60 * 60 * 1000;\n\nfunction isoDate(date) {\n  return date.toISOString().slice(0, 10);\n}\n\nfunction daysAgo(now, days) {\n  return isoDate(new Date(now.getTime() - days * DAY_MS));\n}\n\nfunction parseJsonList(text) {\n  if (Array.isArray(text)) return text;\n  if (typeof text !== 'string' || text.trim() === '') return [];\n  const parsed = JSON.parse(text);\n  if (!Array.isArray(parsed)) throw new Error(`Expected a JSON array from Supabase, got: ${text.slice(0, 200)}`);\n  return parsed;\n}\n\nfunction normalizeFacebookUrl(value) {\n  if (!value) return null;\n  const trimmed = String(value).trim();\n  if (trimmed === '') return null;\n  if (/^https?:\\/\\//i.test(trimmed)) return trimmed;\n  if (/facebook\\.com/i.test(trimmed)) return `https://${trimmed.replace(/^\\/+/, '')}`;\n  return `https://www.facebook.com/${trimmed.replace(/^[@/]+/, '')}`;\n}\n\nfunction normalizeLinkedinSlug(value) {\n  if (!value) return null;\n  const trimmed = String(value).trim();\n  const match = trimmed.match(/linkedin\\.com\\/(?:company|showcase)\\/([^/?#]+)/i);\n  const slug = match ? match[1] : trimmed.replace(/^\\/+|\\/+$/g, '');\n  return slug === '' ? null : slug;\n}\n\nfunction normalizeDomain(value) {\n  if (!value) return null;\n  const domain = String(value)\n    .trim()\n    .toLowerCase()\n    .replace(/^https?:\\/\\//, '')\n    .replace(/^www\\./, '')\n    .split(/[/?#]/)[0];\n  return domain === '' ? null : domain;\n}\n\nfunction metaKeywordUrl(keyword, country) {\n  const params = new URLSearchParams({\n    active_status: 'active',\n    ad_type: 'all',\n    country,\n    is_targeted_country: 'false',\n    media_type: 'all',\n    q: `\"${keyword}\"`,\n    search_type: 'keyword_exact_phrase',\n  });\n  return `https://www.facebook.com/ads/library/?${params.toString()}`;\n}\n\n// Two Meta scrapers are supported. The default (jmlp) costs about $0.15 per 1,000 ads;\n// Apify's official one costs about $5.80 per 1,000 on the free plan.\nfunction metaInput(config, { url, keyword, limit }) {\n  if (config.actors.meta.startsWith('apify~facebook-ads-scraper')) {\n    return {\n      startUrls: [{ url: url || metaKeywordUrl(keyword, config.country) }],\n      resultsLimit: limit,\n      activeStatus: 'active',\n      isDetailsPerAd: false,\n      onlyTotal: false,\n      includeAboutPage: false,\n    };\n  }\n  const target = url ? { adLibraryUrls: [url] } : { keyword, searchType: 'keyword_exact_phrase' };\n  return {\n    ...target,\n    activeStatus: 'active',\n    country: config.country,\n    sortBy: 'impressions',\n    maxAds: limit,\n    maxAdsPerTarget: limit,\n    keywordFallback: false,\n    proxyConfiguration: { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] },\n  };\n}\n\nfunction makeJob(base, fields) {\n  return {\n    run_id: base.runId,\n    timeout_secs: base.config.apify_timeout_secs,\n    max_charge_usd: base.config.max_charge_usd_per_job,\n    competitor_id: null,\n    competitor_name: null,\n    ...fields,\n  };\n}\n\nfunction buildJobs({ config, runId, competitors, keywords, now }) {\n  const base = { config, runId };\n  const start = daysAgo(now, config.lookback_days);\n  const end = daysAgo(now, 1);\n  const jobs = [];\n\n  for (const competitor of competitors) {\n    const owner = { competitor_id: competitor.id, competitor_name: competitor.name, source: 'competitor' };\n\n    const facebookUrl = normalizeFacebookUrl(competitor.facebook_url);\n    if (facebookUrl) {\n      jobs.push(\n        makeJob(base, {\n          ...owner,\n          platform: 'meta',\n          source_query: facebookUrl,\n          actor: config.actors.meta,\n          limit: config.meta_results_limit,\n          input: metaInput(config, { url: facebookUrl, limit: config.meta_results_limit }),\n        }),\n      );\n    }\n\n    const linkedinSlug = normalizeLinkedinSlug(competitor.linkedin_slug);\n    if (linkedinSlug) {\n      jobs.push(\n        makeJob(base, {\n          ...owner,\n          platform: 'linkedin',\n          source_query: linkedinSlug,\n          actor: config.actors.linkedin,\n          limit: config.linkedin_results_limit,\n          input: {\n            advertisers: [linkedinSlug],\n            countries: [config.country],\n            startDate: start,\n            endDate: end,\n            includeDetails: config.linkedin_include_details,\n            maxAdsPerQuery: config.linkedin_results_limit,\n            proxyConfiguration: { useApifyProxy: true },\n          },\n        }),\n      );\n    }\n\n    const domain = normalizeDomain(competitor.domain);\n    if (domain) {\n      jobs.push(\n        makeJob(base, {\n          ...owner,\n          platform: 'google',\n          source_query: domain,\n          actor: config.actors.google,\n          limit: config.google_results_limit,\n          input: {\n            domains: [domain],\n            resultType: 'ads',\n            region: config.country,\n            startDate: start,\n            maxAdsPerSearch: config.google_results_limit,\n            includeAdText: true,\n            includeDetails: false,\n            proxyConfiguration: { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] },\n          },\n        }),\n      );\n    }\n  }\n\n  for (const row of keywords) {\n    const keyword = String(row.keyword || '').trim();\n    if (keyword === '') continue;\n    const platforms = Array.isArray(row.platforms) ? row.platforms : ['meta', 'linkedin'];\n\n    if (platforms.includes('meta')) {\n      jobs.push(\n        makeJob(base, {\n          platform: 'meta',\n          source: 'keyword',\n          source_query: keyword,\n          actor: config.actors.meta,\n          limit: config.keyword_results_limit,\n          input: metaInput(config, { keyword, limit: config.keyword_results_limit }),\n        }),\n      );\n    }\n\n    if (platforms.includes('linkedin')) {\n      jobs.push(\n        makeJob(base, {\n          platform: 'linkedin',\n          source: 'keyword',\n          source_query: keyword,\n          actor: config.actors.linkedin,\n          limit: config.keyword_results_limit,\n          input: {\n            keyword,\n            countries: [config.country],\n            startDate: start,\n            endDate: end,\n            includeDetails: false,\n            maxAdsPerQuery: config.keyword_results_limit,\n            proxyConfiguration: { useApifyProxy: true },\n          },\n        }),\n      );\n    }\n  }\n\n  return jobs;\n}\n\n// @n8n-entry\nconst config = $('Config').first().json;\nconst runId = $('Abrir execução').first().json.id;\nconst competitors = parseJsonList($('Buscar concorrentes').first().json.body);\nconst keywords = parseJsonList($('Buscar palavras-chave').first().json.body);\n\nif (!runId) throw new Error('Supabase did not return the run id. Check the spy_runs table and the Supabase credential.');\n\nconst jobs = buildJobs({ config, runId, competitors, keywords, now: new Date() });\nif (jobs.length === 0) {\n  throw new Error('No jobs to run. Add competitors (spy_competitors) or keywords (spy_keywords) in Supabase.');\n}\nreturn jobs.map((job) => ({ json: job }));\n"
+      }
+    },
+    {
+      "id": "ccbb418b-0aca-454a-b661-d489c162c7df",
+      "name": "Coletar no Apify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1320,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/{{ $json.actor }}/run-sync-get-dataset-items?timeout={{ $json.timeout_secs }}&maxTotalChargeUsd={{ $json.max_charge_usd }}&clean=1",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.input) }}",
+        "options": {
+          "timeout": 330000,
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "fullResponse": true,
+              "neverError": true,
+              "outputPropertyName": "body"
+            }
+          },
+          "batching": {
+            "batch": {
+              "batchSize": 2,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "",
+          "name": "Espião · Apify"
+        }
+      }
+    },
+    {
+      "id": "c26709be-a675-40a2-9664-07aa8a058ecb",
+      "name": "Normalizar resultados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Turns one Apify response into the payload of the spy_ingest RPC.\n\nconst DAY_MS = 24 * 60 * 60 * 1000;\nconst GOOGLE_ACTIVE_WINDOW_DAYS = 7;\nconst MAX_RAW_CHARS = 20000;\nconst MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };\n\nfunction cleanText(value) {\n  if (typeof value !== 'string') return null;\n  const text = value.trim();\n  if (text === '' || text.includes('{{')) return null;\n  return text;\n}\n\nfunction firstText(...values) {\n  for (const value of values) {\n    const text = cleanText(value);\n    if (text) return text;\n  }\n  return null;\n}\n\nfunction toIso(value) {\n  if (value === null || value === undefined || value === '') return null;\n  const date = typeof value === 'number' ? new Date(value < 1e12 ? value * 1000 : value) : new Date(value);\n  return Number.isNaN(date.getTime()) ? null : date.toISOString();\n}\n\nfunction parseLinkedinDate(value) {\n  const match = typeof value === 'string' && value.trim().match(/^([A-Z][a-z]{2}) (\\d{1,2}), (\\d{4})$/);\n  if (!match || MONTHS[match[1]] === undefined) return null;\n  return new Date(Date.UTC(Number(match[3]), MONTHS[match[1]], Number(match[2]))).toISOString();\n}\n\nfunction compactRaw(raw) {\n  const text = JSON.stringify(raw);\n  return text.length > MAX_RAW_CHARS ? { truncated: true, preview: text.slice(0, 2000) } : raw;\n}\n\n// Reads a field in either naming style: Apify's official scraper uses camelCase\n// (adArchiveID, snapshot.ctaText), the default jmlp scraper uses snake_case (ad_archive_id, snapshot.cta_text).\nfunction pick(obj, ...keys) {\n  if (!obj) return undefined;\n  for (const key of keys) {\n    if (obj[key] !== undefined && obj[key] !== null) return obj[key];\n  }\n  return undefined;\n}\n\nfunction metaMedia(node) {\n  return {\n    image: firstText(\n      pick(node, 'originalImageUrl', 'original_image_url'),\n      pick(node, 'resizedImageUrl', 'resized_image_url'),\n    ),\n    preview: firstText(pick(node, 'videoPreviewImageUrl', 'video_preview_image_url')),\n    video: firstText(pick(node, 'videoHdUrl', 'video_hd_url'), pick(node, 'videoSdUrl', 'video_sd_url')),\n  };\n}\n\nfunction metaAdId(item) {\n  return pick(item, 'adArchiveID', 'adArchiveId', 'ad_archive_id');\n}\n\nfunction normalizeMeta(item, now) {\n  const id = metaAdId(item);\n  if (!id) return null;\n  const snap = item.snapshot || {};\n  const cards = Array.isArray(snap.cards) ? snap.cards : [];\n  const card = cards[0] || {};\n  const image = metaMedia((Array.isArray(snap.images) && snap.images[0]) || {});\n  const video = metaMedia((Array.isArray(snap.videos) && snap.videos[0]) || {});\n  const cardMedia = metaMedia(card);\n  const isActive = pick(item, 'isActive', 'is_active') !== false;\n  const format = String(pick(snap, 'displayFormat', 'display_format') || '').toLowerCase() || null;\n  const collation = pick(item, 'collationCount', 'collation_count');\n  const platforms = pick(item, 'publisherPlatform', 'publisher_platform');\n  const body = pick(snap, 'body');\n\n  return {\n    external_id: String(id),\n    advertiser_name: firstText(pick(item, 'pageName', 'page_name'), pick(snap, 'pageName', 'page_name')),\n    format,\n    headline: firstText(\n      snap.title,\n      card.title,\n      pick(snap, 'linkDescription', 'link_description'),\n      pick(card, 'linkDescription', 'link_description'),\n    ),\n    body: firstText(body && body.text, typeof body === 'string' ? body : null, card.body),\n    cta: firstText(pick(snap, 'ctaText', 'cta_text'), pick(card, 'ctaText', 'cta_text')),\n    link_url: firstText(pick(snap, 'linkUrl', 'link_url'), pick(card, 'linkUrl', 'link_url')),\n    image_url: firstText(image.image, cardMedia.image, video.preview, cardMedia.preview),\n    video_url: firstText(video.video, cardMedia.video),\n    library_url: `https://www.facebook.com/ads/library/?id=${id}`,\n    publisher_platforms: Array.isArray(platforms) ? platforms : null,\n    variations: Number.isInteger(collation) ? collation : null,\n    platform_started_at: toIso(pick(item, 'startDateFormatted', 'start_date_formatted', 'startDate', 'start_date')),\n    platform_last_shown_at: isActive\n      ? now.toISOString()\n      : toIso(pick(item, 'endDateFormatted', 'end_date_formatted', 'endDate', 'end_date')),\n    is_active: isActive,\n    raw: compactRaw({\n      page_id: pick(item, 'pageID', 'pageId', 'page_id') || null,\n      page_profile_uri: pick(snap, 'pageProfileUri', 'page_profile_uri') || null,\n      page_categories: pick(snap, 'pageCategories', 'page_categories') || null,\n      page_like_count: pick(snap, 'pageLikeCount', 'page_like_count') || null,\n      display_format: pick(snap, 'displayFormat', 'display_format') || null,\n      collation_id: pick(item, 'collationId', 'collation_id') || null,\n      categories: item.categories || null,\n      input: item.input || item.inputUrl || null,\n      cards: cards.slice(0, 10).map((c) => ({\n        title: cleanText(c.title),\n        body: cleanText(c.body),\n        cta: cleanText(pick(c, 'ctaText', 'cta_text')),\n        link: cleanText(pick(c, 'linkUrl', 'link_url')),\n        image: firstText(metaMedia(c).image, metaMedia(c).preview),\n      })),\n      extra_texts: pick(snap, 'extraTexts', 'extra_texts') || null,\n    }),\n  };\n}\n\nfunction normalizeLinkedin(item) {\n  if (!item.ad_id) return null;\n  if (/job/i.test(item.format || '')) return null; // job posts are recruiting, not marketing\n  const carousel = Array.isArray(item.carousel_images) ? item.carousel_images : [];\n  const images = Array.isArray(item.image_urls) ? item.image_urls : [];\n  const videos = Array.isArray(item.video_urls) ? item.video_urls : [];\n\n  return {\n    external_id: String(item.ad_id),\n    advertiser_name: firstText(item.advertiser, item.promoted_by),\n    format: firstText(item.format, item.creative_type),\n    headline: firstText(item.headline),\n    body: firstText(item.body, item.body_preview),\n    cta: firstText(item.cta, Array.isArray(item.message_buttons) ? item.message_buttons[0] : null),\n    link_url: null,\n    image_url: firstText(images[0], carousel[0] && carousel[0].image_url),\n    video_url: firstText(videos[videos.length - 1]),\n    library_url: firstText(item.detail_url) || `https://www.linkedin.com/ad-library/detail/${item.ad_id}`,\n    publisher_platforms: ['linkedin'],\n    variations: carousel.length > 0 ? carousel.length : null,\n    platform_started_at: parseLinkedinDate(item.ran_from),\n    platform_last_shown_at: parseLinkedinDate(item.ran_to),\n    is_active: item.is_active === false ? false : true,\n    raw: compactRaw({\n      advertiser_url: item.advertiser_url || null,\n      payer: item.payer || null,\n      promoted_by: item.promoted_by || null,\n      creative_type: item.creative_type || null,\n      carousel: carousel.slice(0, 10),\n      message_sender: item.message_sender || null,\n      query: item.query || null,\n      has_details: item.has_details === true,\n    }),\n  };\n}\n\nfunction normalizeGoogle(item, now) {\n  if (!item.creativeId) return null;\n  const lastShown = toIso(item.lastShown);\n  const activeSince = now.getTime() - GOOGLE_ACTIVE_WINDOW_DAYS * DAY_MS;\n  const isActive = lastShown ? new Date(lastShown).getTime() >= activeSince : true;\n  const lines = Array.isArray(item.adTextLines) ? item.adTextLines.filter((l) => typeof l === 'string') : [];\n\n  return {\n    external_id: String(item.creativeId),\n    advertiser_name: firstText(item.advertiserName, item.advertiserLegalName),\n    format: (item.format || '').toLowerCase() || null,\n    headline: firstText(item.adHeadline),\n    body: firstText(item.adDescription, lines.length > 0 ? lines.join(' | ') : null),\n    cta: null,\n    link_url: firstText(item.adDisplayUrl, item.domain),\n    image_url: firstText(item.imageUrl),\n    video_url: null,\n    library_url: firstText(item.adUrl),\n    publisher_platforms: Array.isArray(item.platforms) ? item.platforms : null,\n    variations: Number.isInteger(item.variationCount) ? item.variationCount : null,\n    platform_started_at: toIso(item.firstShown),\n    platform_last_shown_at: lastShown,\n    is_active: isActive,\n    raw: compactRaw({\n      advertiserId: item.advertiserId || null,\n      advertiserCountry: item.advertiserCountry || null,\n      advertiserVerified: item.advertiserVerified ?? null,\n      domain: item.domain || null,\n      previewUrl: item.previewUrl || null,\n      shownForDays: item.shownForDays ?? null,\n      adTextKind: item.adTextKind || null,\n      googleCustomerId: item.googleCustomerId || null,\n      adGroupId: item.adGroupId || null,\n    }),\n  };\n}\n\nconst NORMALIZERS = { meta: normalizeMeta, linkedin: normalizeLinkedin, google: normalizeGoogle };\n\nfunction readApifyResponse(response) {\n  const status = Number(response.statusCode) || 0;\n  let data = response.body ?? response.data ?? null;\n  if (typeof data === 'string') {\n    try {\n      data = JSON.parse(data);\n    } catch {\n      return { status, items: null, error: `Invalid JSON from Apify (HTTP ${status}): ${data.slice(0, 300)}` };\n    }\n  }\n  if (status < 200 || status >= 300) {\n    const message = (data && data.error && (data.error.message || data.error.type)) || JSON.stringify(data).slice(0, 300);\n    return { status, items: null, error: `Apify HTTP ${status}: ${message}` };\n  }\n  if (!Array.isArray(data)) {\n    return { status, items: null, error: `Apify returned no dataset array (HTTP ${status})` };\n  }\n  return { status, items: data, error: null };\n}\n\nfunction normalizeJobResult(job, response, now) {\n  const base = {\n    p_run_id: job.run_id,\n    p_platform: job.platform,\n    p_competitor_id: job.competitor_id,\n    p_source: job.source,\n    p_source_query: job.source_query,\n  };\n  const { items, error } = readApifyResponse(response);\n  if (!items) {\n    return { ...base, p_ok: false, p_error: error, p_incomplete: true, p_ads: [] };\n  }\n\n  const normalize = NORMALIZERS[job.platform];\n  const hasAdId = (item) => Boolean(item && (metaAdId(item) || item.ad_id || item.creativeId));\n  const adItems = items.filter(hasAdId);\n  const errorItems = items.filter((item) => item && item.error && !hasAdId(item));\n  const byId = new Map();\n  for (const item of adItems) {\n    const ad = normalize(item, now);\n    if (ad && !byId.has(ad.external_id)) byId.set(ad.external_id, ad);\n  }\n  const ads = [...byId.values()];\n\n  if (ads.length === 0 && errorItems.length > 0) {\n    const message = String(errorItems[0].error.message || errorItems[0].error).slice(0, 500);\n    return { ...base, p_ok: false, p_error: `Scraper error: ${message}`, p_incomplete: true, p_ads: [] };\n  }\n\n  const limitReached = job.limit > 0 && adItems.length >= job.limit;\n  return {\n    ...base,\n    p_ok: true,\n    p_error: errorItems.length > 0 ? `${errorItems.length} item(s) with errors in the dataset` : null,\n    p_incomplete: limitReached || errorItems.length > 0,\n    p_ads: ads,\n  };\n}\n\n// @n8n-entry\nconst job = $('Montar coletas').item.json;\nreturn { json: normalizeJobResult(job, $json, new Date()) };\n",
+        "mode": "runOnceForEachItem"
+      }
+    },
+    {
+      "id": "0f455d15-6dd7-47ba-9462-a0bbfcf93f6a",
+      "name": "Gravar no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1760,
+        80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/rpc/spy_ingest",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      }
+    },
+    {
+      "id": "9dacc64b-1552-43a8-b69e-0e1d1a31d528",
+      "name": "Resumir execução",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        80
+      ],
+      "parameters": {
+        "jsCode": "// Aggregates every spy_ingest response into the final spy_runs row.\n\nfunction readIngestResponse(response) {\n  const status = Number(response.statusCode) || 0;\n  let body = response.body ?? response.data ?? null;\n  if (typeof body === 'string') {\n    try {\n      body = JSON.parse(body);\n    } catch {\n      body = null;\n    }\n  }\n  if (status >= 200 && status < 300 && body && typeof body === 'object' && 'ok' in body) {\n    return { saved: true, result: body };\n  }\n  const detail = body && body.message ? body.message : `HTTP ${status}`;\n  return { saved: false, error: `Supabase ingest failed: ${detail}` };\n}\n\nfunction summarizeRun(responses, now) {\n  const stats = {\n    jobs: responses.length,\n    jobs_ok: 0,\n    jobs_failed: 0,\n    ingest_failures: 0,\n    ads_seen: 0,\n    ads_new: 0,\n    ads_updated: 0,\n    ads_closed: 0,\n    by_platform: {},\n    errors: [],\n  };\n\n  for (const response of responses) {\n    const { saved, result, error } = readIngestResponse(response);\n    if (!saved) {\n      stats.ingest_failures += 1;\n      stats.jobs_failed += 1;\n      stats.errors.push(error);\n      continue;\n    }\n    const platform = (stats.by_platform[result.platform] ||= { jobs: 0, failed: 0, ads: 0, new: 0 });\n    platform.jobs += 1;\n    if (!result.ok) {\n      stats.jobs_failed += 1;\n      platform.failed += 1;\n      stats.errors.push(`${result.platform}: ${result.source_query}`);\n      continue;\n    }\n    stats.jobs_ok += 1;\n    stats.ads_seen += result.ads;\n    stats.ads_new += result.inserted;\n    stats.ads_updated += result.updated;\n    stats.ads_closed += result.closed;\n    platform.ads += result.ads;\n    platform.new += result.inserted;\n  }\n\n  stats.errors = stats.errors.slice(0, 30);\n  let status = 'success';\n  if (stats.jobs_ok === 0) status = 'failed';\n  else if (stats.jobs_failed > 0) status = 'partial';\n\n  return { finished_at: now.toISOString(), status, stats };\n}\n\n// @n8n-entry\nconst runId = $('Abrir execução').first().json.id;\nconst responses = $input.all().map((item) => item.json);\nreturn [{ json: { run_id: runId, patch: summarizeRun(responses, new Date()) } }];\n"
+      }
+    },
+    {
+      "id": "c2586dd0-df93-4e41-bab8-4878cbedb8ab",
+      "name": "Fechar execução",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2200,
+        80
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Config').first().json.supabase_url }}/rest/v1/spy_runs?id=eq.{{ $json.run_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.patch) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Espião · Supabase"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Toda segunda às 5h": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Executar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Abrir execução",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Abrir execução": {
+      "main": [
+        [
+          {
+            "node": "Buscar concorrentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar concorrentes": {
+      "main": [
+        [
+          {
+            "node": "Buscar palavras-chave",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar palavras-chave": {
+      "main": [
+        [
+          {
+            "node": "Montar coletas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar coletas": {
+      "main": [
+        [
+          {
+            "node": "Coletar no Apify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coletar no Apify": {
+      "main": [
+        [
+          {
+            "node": "Normalizar resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar resultados": {
+      "main": [
+        [
+          {
+            "node": "Gravar no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gravar no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Resumir execução",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumir execução": {
+      "main": [
+        [
+          {
+            "node": "Fechar execução",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  }
+}

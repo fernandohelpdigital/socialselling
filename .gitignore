@@ -32,3 +32,7 @@ traces/
 
 # os
 .DS_Store
+
+# ad-spy: private values and competitor list stay local
+ad-spy/config.local.json
+ad-spy/supabase/*.local.sql

@@ -1,0 +1,211 @@
+[
+ {
+  "ad_archive_id": "1546096983313990",
+  "page_id": "1000236926784519",
+  "snapshot": {
+   "branded_content": null,
+   "page_id": "1000236926784519",
+   "page_is_deleted": false,
+   "page_profile_uri": "https://www.facebook.com/lisecaustriagmbh/",
+   "root_reshared_post": null,
+   "byline": null,
+   "disclaimer_label": null,
+   "page_name": "LISEC",
+   "page_profile_picture_url": "https://scontent-dfw5-3.xx.fbcdn.net/.jpg?",
+   "body": {
+    "text": "LiSEC, with over six decades of experience as a manufacturer of glass processing machines, not only offers innovative individual machines and complete solutions such as lines in the machine sector, but also tailored software in the field of flat glass processing and refining.💎"
+   },
+   "is_reshared": false,
+   "brazil_tax_id": null,
+   "caption": "www.fb.com",
+   "cards": [],
+   "cta_text": "Visit profile",
+   "cta_type": "VISIT_PROFILE",
+   "country_iso_code": null,
+   "current_page_name": null,
+   "display_format": "VIDEO",
+   "event": null,
+   "images": [],
+   "link_description": null,
+   "link_url": "http://www.fb.com/100063699037718",
+   "page_categories": [
+    "Industrial Company"
+   ],
+   "page_entity_type": null,
+   "page_is_profile_page": null,
+   "page_like_count": 21663,
+   "title": null,
+   "videos": [
+    {
+     "video_hd_url": "https://video-dfw5-1.xx.fbcdn.net/.mp4?",
+     "video_preview_image_url": "https://scontent-dfw5-2.xx.fbcdn.net/.jpg?",
+     "video_sd_url": "https://video-dfw6-2.xx.fbcdn.net/.mp4?",
+     "watermarked_video_hd_url": null,
+     "watermarked_video_sd_url": null
+    }
+   ],
+   "additional_info": null,
+   "ec_certificates": [],
+   "extra_images": [],
+   "extra_links": [],
+   "extra_texts": [],
+   "extra_videos": []
+  },
+  "is_active": true,
+  "has_user_reported": false,
+  "report_count": null,
+  "menu_items": [],
+  "state_media_run_label": null,
+  "page_is_deleted": false,
+  "page_name": "LISEC",
+  "ad_id": null,
+  "archive_types": null,
+  "categories": [
+   "UNKNOWN"
+  ],
+  "collation_count": 1,
+  "collation_id": "1245581717446282",
+  "contains_digital_created_media": false,
+  "contains_sensitive_content": false,
+  "currency": "",
+  "end_date": 1794643200,
+  "entity_type": null,
+  "fev_info": null,
+  "gated_type": "ELIGIBLE",
+  "hidden_safety_data": null,
+  "hide_data_status": "NONE",
+  "impressions_with_index": {
+   "impressions_text": null,
+   "impressions_index": -1
+  },
+  "is_aaa_eligible": true,
+  "is_profile_page": null,
+  "political_countries": null,
+  "publisher_platform": [
+   "FACEBOOK"
+  ],
+  "reach_estimate": null,
+  "regional_regulation_data": {
+   "finserv": {
+    "is_deemed_finserv": false,
+    "is_limited_delivery": false
+   },
+   "tw_anti_scam": {
+    "is_limited_delivery": false
+   }
+  },
+  "spend": null,
+  "start_date": 1768377600,
+  "targeted_or_reached_countries": [],
+  "total_active_time": null,
+  "eu_total_reach": 9886,
+  "eu_transparency": {
+   "targets_eu": true,
+   "location_audience": [
+    {
+     "name": "Romania",
+     "num_obfuscated": 0,
+     "type": "countries",
+     "excluded": false
+    },
+    {
+     "name": "France",
+     "num_obfuscated": 0,
+     "type": "countries",
+     "excluded": false
+    },
+    {
+     "name": "Germany",
+     "num_obfuscated": 0,
+     "type": "countries",
+     "excluded": false
+    }
+   ],
+   "gender_audience": "All",
+   "age_audience": {
+    "min": 24,
+    "max": 55
+   },
+   "eu_total_reach": 9886,
+   "age_country_gender_reach_breakdown": [
+    {
+     "country": "AT",
+     "age_gender_breakdowns": [
+      {
+       "age_range": "18-24",
+       "male": 4,
+       "female": null,
+       "unknown": null
+      },
+      {
+       "age_range": "25-34",
+       "male": 73,
+       "female": 13,
+       "unknown": null
+      },
+      {
+       "age_range": "35-44",
+       "male": 106,
+       "female": 25,
+       "unknown": null
+      },
+      {
+       "age_range": "45-54",
+       "male": 56,
+       "female": 15,
+       "unknown": null
+      },
+      {
+       "age_range": "55-64",
+       "male": 2,
+       "female": 2,
+       "unknown": null
+      }
+     ]
+    },
+    {
+     "country": "DE",
+     "age_gender_breakdowns": [
+      {
+       "age_range": "18-24",
+       "male": 2,
+       "female": null,
+       "unknown": null
+      },
+      {
+       "age_range": "25-34",
+       "male": 58,
+       "female": 7,
+       "unknown": null
+      },
+      {
+       "age_range": "35-44",
+       "male": 88,
+       "female": 11,
+       "unknown": 2
+      },
+      {
+       "age_range": "45-54",
+       "male": 58,
+       "female": 8,
+       "unknown": 3
+      },
+      {
+       "age_range": "55-64",
+       "male": 7,
+       "female": 2,
+       "unknown": null
+      }
+     ]
+    }
+   ]
+  },
+  "payer_beneficiary_data": [
+   {
+    "payer": "LISEC",
+    "beneficiary": "LISEC"
+   }
+  ],
+  "input": "project management software"
+ }
+]

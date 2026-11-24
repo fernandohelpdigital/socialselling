@@ -1,0 +1,15 @@
+{
+  "name": "ad-spy",
+  "private": true,
+  "type": "module",
+  "description": "Competitor ad monitoring (Meta, LinkedIn, Google) on n8n + Supabase",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "deploy": "node scripts/deploy.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.15"
+  }
+}
